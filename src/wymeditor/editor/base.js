@@ -394,15 +394,16 @@ WYMeditor.editor.prototype.selected = function () {
 
     if (node) {
         if (jQuery.browser.msie) {
-            if (sel.isCollapsed && node.tagName && node.tagName.toLowerCase() === 'body') {
-                // For collapsed selections, we have to use the ghetto "caretPos"
-                // hack to find the selection, otherwise it always says that the
-                // body element is selected
+            // For collapsed selections, we have to use the ghetto "caretPos"
+            // hack to find the selection, otherwise it always says that the
+            // body element is selected
+            var isBodyTag = node.tagName && node.tagName.toLowerCase() === "body";
+            var isTextNode = node.nodeName === "#text";
+
+            if (sel.isCollapsed && (isBodyTag || isTextNode)) {
                 caretPos = this._iframe.contentWindow.document.caretPos;
-                if (caretPos) {
-                    if (caretPos.parentElement) {
-                        node = caretPos.parentElement();
-                    }
+                if (caretPos && caretPos.parentElement) {
+                    node = caretPos.parentElement();
                 }
             }
         }
@@ -757,7 +758,7 @@ WYMeditor.editor.prototype.spaceBlockingElements = function () {
 
         $body = jQuery(this._doc).find('body.wym_iframe'),
         children = $body.children(),
-        placeholderNode = '<br _moz_editor_bogus_node="TRUE" _moz_dirty="">',
+        placeholderNode = '<br _moz_editor_bogus_node="TRUE" _moz_dirty="" />',
         $firstChild,
         $lastChild,
         blockSepSelector;

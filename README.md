@@ -43,7 +43,7 @@ Quick Start
 includes jQuery.
 
 2. Download the
-[Version 1.0.0b3](https://github.com/downloads/wymeditor/wymeditor/wymeditor-1.0.0b3.tar.gz)
+[Version 1.0.0b4](https://github.com/downloads/wymeditor/wymeditor/wymeditor-1.0.0b4.tar.gz)
 archive and extract the contents to a folder in your project.
 
 3. Include the `wymeditor/jquery.wymeditor.min.js` file on your page. This file
@@ -137,21 +137,47 @@ to test with jQuery 1.8.0 against a local server on port 8000:
 
 ### Building WYMeditor
 
+
 1. Get a copy of the source using git:
 
-    git clone git://github.com/wymeditor/wymeditor.git
+    `git clone git://github.com/wymeditor/wymeditor.git`
 
 2. Install `make`, Node.js and [UglifyJS](https://github.com/mishoo/UglifyJS/).
 To install UglifyJS using [NPM](http://npmjs.org/) run the following:
 
-    npm install -g uglify-js
+    `npm install -g uglify-js`
 
 3. Run `make` from your git clone:
 
-    $ cd wymeditor
-    $ make
+    `$ cd wymeditor`
 
-The results will appear in your `dist` directory.
+    `$ make`
+
+The resulting compressed distribution will appear in your `dist` directory.
+
+#### Building with Google's Closure Compiler (Java)
+
+The default WYMeditor distribution is built with
+[UglifyJS](https://github.com/mishoo/UglifyJS), which requires the
+installation of Node.js. If you prefer Java and/or Google's Closure Compiler,
+you can follow these instructions instead.
+
+1. Get a copy of the source using git:
+
+    `git clone git://github.com/wymeditor/wymeditor.git`
+
+2. Install `make` and Java.
+
+3. Download
+[Closure Compiler application](https://developers.google.com/closure/compiler/),
+extracting `compiler.jar` into your `wymeditor` directory.
+
+4. Run `make` from your git clone:
+
+    `$ cd wymeditor`
+
+    `$ make min_closure archive`
+
 
 Getting Help
 ------------
@@ -160,7 +186,6 @@ Getting Help
  - **Forum:** http://community.wymeditor.org
  - **Issue tracking:** https://github.com/wymeditor/wymeditor/issues
  - **Official branch:** https://github.com/wymeditor/wymeditor
- - **Continous Integration:** http://jenkins.wymeditor.org
 
 [Read more on contributing](https://github.com/wymeditor/wymeditor/wiki/Contributing).
 

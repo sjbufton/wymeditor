@@ -27,10 +27,11 @@ WYMeditor.WymClassMozilla = function (wym) {
 };
 
 // Placeholder cell to allow content in TD cells for FF 3.5+
-WYMeditor.WymClassMozilla.CELL_PLACEHOLDER = '<br _moz_dirty="">';
+WYMeditor.WymClassMozilla.CELL_PLACEHOLDER = '<br _moz_dirty="" />';
 
 // Firefox 3.5 and 3.6 require the CELL_PLACEHOLDER and 4.0 doesn't
-WYMeditor.WymClassMozilla.NEEDS_CELL_FIX = parseInt(jQuery.browser.version,10) == 1 &&
+WYMeditor.WymClassMozilla.NEEDS_CELL_FIX = parseInt(
+    jQuery.browser.version, 10) == 1 &&
     jQuery.browser.version >= '1.9.1' &&
     jQuery.browser.version < '2.0';
 
@@ -92,7 +93,7 @@ WYMeditor.WymClassMozilla.prototype.initIframe = function (iframe) {
     this.listen();
 };
 
-/* @name html
+/** @name html
  * @description Get/Set the html value
  */
 WYMeditor.WymClassMozilla.prototype.html = function (html) {

@@ -25,7 +25,7 @@ WYMeditor.WymClassExplorer = function (wym) {
     this._class = "className";
 };
 
-WYMeditor.WymClassExplorer.PLACEHOLDER_NODE = '<br>';
+WYMeditor.WymClassExplorer.PLACEHOLDER_NODE = '<br />';
 
 WYMeditor.WymClassExplorer.prototype.initIframe = function (iframe) {
     //This function is executed twice, though it is called once!
@@ -281,7 +281,7 @@ WYMeditor.WymClassExplorer.prototype.setFocusToNode = function (node, toStart) {
     node.focus();
 };
 
-/* @name spaceBlockingElements
+/** @name spaceBlockingElements
  * @description Insert <br> elements between adjacent blocking elements and
  * p elements, between block elements or blocking elements and after blocking
  * elements.

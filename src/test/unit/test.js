@@ -408,6 +408,65 @@ test("no-op on table with colgroup generates valid XHTML", function () {
     equals(jQuery.wymeditors(0).parser.parse(tableWithColXHtml), tableWithColXHtml);
 });
 
+test("Self closing button tags should be expanded and removed", function () {
+    var html = '<p><button /></p>';
+    var expected = '<p></p>';
+    equals(jQuery.wymeditors(0).parser.parse(html), expected);
+});
+
+test("Iframe should not be self closing", function () {
+    var html = '<iframe width="480" height="390" src="asd.html" frameborder="0" /></iframe>';
+    var expected = '<iframe width="480" height="390" src="asd.html" frameborder="0"></iframe>';
+    equals(jQuery.wymeditors(0).parser.parse(html), expected);
+});
+
+test("Allow HR inside strong tags", function () {
+    var html = '<strong>hello<hr /></strong>';
+    equals(jQuery.wymeditors(0).parser.parse(html), html);
+});
+
+test("Allow line breaks inside em tags", function() {
+    var html = '<em>hello<br />world</em>';
+    wymeditor = jQuery.wymeditors(0);
+    equals(wymeditor.parser.parse(html), html);
+});
+
+test("Allow line breaks after strong in lists", function () {
+    expect(4);
+    var listHtml = String() +
+        '<ol id="ol_1">' +
+            '<li id="li_1">li_1' +
+                '<ol>' +
+                    '<li id="li_1_1"><strong>li_1_1</strong><br />more text</li>' +
+                '</ol>' +
+            '</li>' +
+        '</ol>',
+        listHtmlUnclosedBr = String() +
+        '<ol id="ol_1">' +
+            '<li id="li_1">li_1' +
+                '<ol>' +
+                    '<li id="li_1_1"><strong>li_1_1</strong><br>more text</li>' +
+                '</ol>' +
+            '</li>' +
+        '</ol>',
+        wymeditor = jQuery.wymeditors(0);
+
+    equals(
+        wymeditor.parser.parse(listHtml),
+        listHtml
+    );
+    equals(
+        wymeditor.parser.parse(listHtmlUnclosedBr),
+        listHtml
+    );
+
+    // Now throw the browser/dom in the mix
+    wymeditor.html(listHtml);
+    htmlEquals(wymeditor, listHtml);
+
+    wymeditor.html(listHtmlUnclosedBr);
+    htmlEquals(wymeditor, listHtml);
+});
 module("Post Init", {setup: setupWym});
 
 test("Sanity check: html()", function () {
@@ -853,7 +912,7 @@ if (jQuery.browser.mozilla) {
         wymeditor.insertTable(3, 2, '', '');
 
         $body.find('td').each(function (index, td) {
-            if (parseInt(jQuery.browser.version) == 1 &&
+            if (parseInt(jQuery.browser.version, 10) == 1 &&
                 jQuery.browser.version >= '1.9.1' && jQuery.browser.version < '2.0') {
                 equals(td.childNodes.length, 1);
             } else {
@@ -878,31 +937,6 @@ if (jQuery.browser.mozilla) {
             equals(isContentEditable(td), true);
         });
     });
-
-    if (!SKIP_KNOWN_FAILING_TESTS) {
-        test("Table cells are editable in FF > 3.5: via inner_html", function () {
-            // This is currently broken. Doing a raw insert in to the editor
-            // body doesn't let us use our fixBodyHtml() fix to add the
-            // appropriate placeholder nodes inside the table cells
-            // Need to figure out another way to detect this and correct
-            // the HTML
-            expect(12);
-
-            var wymeditor = jQuery.wymeditors(0),
-                $body = jQuery(wymeditor._doc).find('body.wym_iframe');
-
-            $body.html(table_3_2_html);
-            $body.find('td').each(function (index, td) {
-                if (parseInt(jQuery.browser.version) == 1 &&
-                    jQuery.browser.version >= '1.9.1' && jQuery.browser.version < '2.0') {
-                    equals(td.childNodes.length, 1);
-                } else {
-                    equals(td.childNodes.length, 0);
-                }
-                equals(isContentEditable(td), true);
-            });
-        });
-    }
 }
 
 module("preformatted text", {setup: setupWym});
@@ -915,7 +949,7 @@ test("Preformatted text retains spacing", function () {
             'double  spaced' +
             '</pre>';
 
-    // Only ie keeps \r\n newlines
+    // Only ie and unsupported old firefox use \r\n newlines
     if (!jQuery.browser.msie) {
         preHtml = preHtml.replace(/\r/g, '');
     }
@@ -923,7 +957,6 @@ test("Preformatted text retains spacing", function () {
     wymeditor.html(preHtml);
 
     expect(1);
-
     equals(wymeditor.xhtml(), preHtml);
 });
 
@@ -975,35 +1008,3 @@ test("_selected image is saved on mousedown", function () {
     $google.mousedown();
     equals(wymeditor._selected_image, $google[0]);
 });
-
-if (jQuery.browser.webkit || jQuery.browser.safari) {
-    module("gh-319", {setup: setupWym});
-
-    var gh_319_divInsertionHtml = String() +
-            '<p>Some text before the div container</p>' +
-            '<div>Anything</div>' +
-            '<p>Some text after the div container</p>';
-
-    test("DIV element is correctly inserted", function () {
-        var initHtml = String() +
-                '<p>Some text before the div container</p>' +
-                '<p id="replaceMe">Replace me</p>' +
-                '<p>Some text after the div container</p>',
-            divHtml = String() +
-                '<div>Anything</div>',
-            wymeditor = jQuery.wymeditors(0),
-            $body, selectedElmnt;
-
-        expect(1);
-
-        wymeditor.html(initHtml);
-        $body = jQuery(wymeditor._doc).find('body.wym_iframe');
-        wymeditor._doc.body.focus();
-
-        selectedElmnt = $body.find('#replaceMe').get(0);
-        makeTextSelection(wymeditor, selectedElmnt, selectedElmnt, 0, selectedElmnt.innerText.length);
-
-        wymeditor._exec(WYMeditor.INSERT_HTML, divHtml);
-        equals($body.html(), gh_319_divInsertionHtml);
-    });
-}
